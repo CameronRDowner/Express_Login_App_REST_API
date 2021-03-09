@@ -17,7 +17,7 @@ router.get('/:id', getUser, (req, res) => {
     res.send(res.user);
 })
 
-router.post('/', getUser, async (req, res) => {
+router.post('/', async (req, res) => {
     const user = new User({
         username: req.body.username,
         email: req.body.email,
