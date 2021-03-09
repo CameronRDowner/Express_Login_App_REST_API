@@ -13,11 +13,11 @@ router.get('/', async (req, res) => {
     }
 })
 
-router.get('/:id', (req, res) => {
-    res.send(res.user.);
+router.get('/:id', getUser, (req, res) => {
+    res.send(res.user);
 })
 
-router.post('/', async (req, res) => {
+router.post('/', getUser, async (req, res) => {
     const user = new User({
         username: req.body.username,
         email: req.body.email,
@@ -32,8 +32,23 @@ router.post('/', async (req, res) => {
     }
 })
 
-router.patch('/', (req, res) => {
-
+router.patch('/:id', getUser, async (req, res) => {
+    if (req.body.username){
+        res.user.username = req.body.username;
+    }
+    if(req.body.email){
+        res.user.email = req.body.email;
+    }
+    if(req.body.password){
+        res.user.password = req.body.password;
+    }
+    try{
+        const updatedUser = await res.user.save();
+        res.json(updatedUser)
+    }
+    catch (error) {
+        res.status(400).json({ message: error.message})
+    }
 })
 
 async function getUser(req, res, next){
