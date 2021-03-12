@@ -1,9 +1,9 @@
-const { request } = require('express');
+const jwt = require('jsonwebtoken');
 const express = require('express');
 const router = express.Router();
 const User = require('./models/user');
 
-router.get('/', async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
     try {
         const users = await User.find();
         res.json(users);
@@ -13,11 +13,11 @@ router.get('/', async (req, res) => {
     }
 })
 
-router.get('/:id', getUser, (req, res) => {
+router.get('/:id', authenticateToken, getUser, (req, res) => {
     res.send(res.user);
 })
 
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
     const user = new User({
         username: req.body.username,
         email: req.body.email,
@@ -32,7 +32,7 @@ router.post('/', async (req, res) => {
     }
 })
 
-router.patch('/:id', getUser, async (req, res) => {
+router.patch('/:id', authenticateToken, getUser, async (req, res) => {
     if (req.body.username){
         res.user.username = req.body.username;
     }
@@ -67,4 +67,19 @@ async function getUser(req, res, next){
     next()
 }
 
+
+function authenticateToken(req, res, next){
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if(token === null){
+        return res.sendStatus(401)
+    }
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, user) => {
+        if(error){
+            return res.sendStatus(403);
+        }
+        req.user = user;
+        next()
+    })
+}
 module.exports = router;
