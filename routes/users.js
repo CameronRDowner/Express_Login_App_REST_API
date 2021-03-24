@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const express = require('express');
 const router = express.Router();
 const User = require('./models/user');
+const bcrypt = require('bcryptjs');
 
 router.get('/', authenticateToken, async (req, res) => {
     try {
@@ -21,7 +22,7 @@ router.post('/', authenticateToken, async (req, res) => {
     const user = new User({
         username: req.body.username,
         email: req.body.email,
-        password: req.body.password
+        passwordHash: bcrypt.hashSync(req.body.password, 10)
     })
     try{
         const newUser = await user.save();
@@ -39,8 +40,8 @@ router.patch('/:id', authenticateToken, getUser, async (req, res) => {
     if(req.body.email){
         res.user.email = req.body.email;
     }
-    if(req.body.password){
-        res.user.password = req.body.password;
+    if(req.body.passwordHash){
+        res.user.passwordHash = req.body.passwordHash;
     }
     try{
         const updatedUser = await res.user.save();

@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    password: {
+    passwordHash: {
         type: String,
         required: true
     },
@@ -17,6 +17,15 @@ const userSchema = new mongoose.Schema({
         type: Date,
         required: true,
         default: Date.now
+    }
+});
+
+userSchema.set('toJSON', {
+    virtuals: true,
+    versionKey: false,
+    transform: function (req, res) {
+        delete res._id;
+        delete res.passwordHash;
     }
 });
 
