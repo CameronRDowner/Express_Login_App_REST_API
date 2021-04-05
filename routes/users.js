@@ -52,6 +52,15 @@ router.patch('/:id', authenticateToken, getUser, async (req, res) => {
     }
 })
 
+router.delete('/:id', authenticateToken, getUser, async (req, res) => {
+    try{
+        User.deleteOne({ userName : { $eq: res.user.userName} })
+    }
+    catch (error) {
+        res.status(400).json({ message: error.message})
+    }
+})
+
 async function getUser(req, res, next){
     let user
     try{
