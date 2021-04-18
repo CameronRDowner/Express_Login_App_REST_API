@@ -1,2 +1,1 @@
-web: node server.js
-web: node authServer.js
+web: node server.js & node authServer.js && fg
