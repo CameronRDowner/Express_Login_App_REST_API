@@ -1,1 +1,1 @@
-web: node server.js & node authServer.js && fg
+web: npm run devStartBoth

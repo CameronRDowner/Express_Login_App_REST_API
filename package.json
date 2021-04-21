@@ -6,6 +6,7 @@
   "scripts": {
     "devStart": "nodemon server.js",
     "devStartAuth": "nodemon authServer.js",
+    "devStartBoth": "concurrently \"npm run devStart\" \"npm run devStartAuth\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -26,6 +27,7 @@
     "mongoose": "^5.11.18"
   },
   "devDependencies": {
+    "concurrently": "^6.0.2",
     "dotenv": "^8.2.0",
     "nodemon": "^2.0.7"
   }

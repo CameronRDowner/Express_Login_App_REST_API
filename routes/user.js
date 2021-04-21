@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('./models/user');
 const bcrypt = require('bcryptjs');
+require('dotenv').config();
 
 router.get('/', authenticateToken, async (req, res) => {
     try {
@@ -18,19 +19,26 @@ router.get('/:id', authenticateToken, getUser, (req, res) => {
     res.send(res.user);
 })
 
-router.post('/', authenticateToken, async (req, res) => {
-    const user = new User({
-        username: req.body.username,
-        email: req.body.email,
-        passwordHash: bcrypt.hashSync(req.body.password, 10)
-    })
-    try{
-        const newUser = await user.save();
-        res.status(201).json(newUser);
-    }
-    catch (error) {
-        res.status(400).json({ message: error.message });
-    }
+router.put('/', async (req, res) => {
+    bcrypt.hash(req.body.password, 10, async function(err, hash) {
+        if (err){
+            throw err;
+        }
+        else{
+            const user = new User({
+                username: req.body.username,
+                email: req.body.email,
+                passwordHash: hash
+            }) 
+            try{
+                const newUser = await user.save();
+                res.status(201).json(newUser);
+            }
+            catch (error) {
+                res.status(400).json({ message: error.message });
+            }
+        }
+    });
 })
 
 router.patch('/:id', authenticateToken, getUser, async (req, res) => {
@@ -92,4 +100,5 @@ function authenticateToken(req, res, next){
         next()
     })
 }
+
 module.exports = router;
