@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "devStart": "nodemon server.js",
-    "devStartAuth": "nodemon authServer.js",
+    "devStart": "node server.js",
+    "devStartAuth": "node authServer.js",
     "devStartBoth": "concurrently \"npm run devStart\" \"npm run devStartAuth\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
