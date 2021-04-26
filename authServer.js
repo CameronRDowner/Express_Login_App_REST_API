@@ -40,4 +40,4 @@ function generateAccessToken(user){
     return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30s' })
 }
 
-app.listen(3001, () => console.log('auth server started'));
+app.listen(process.env.PORT || 3001, () => console.log('auth server started'));
