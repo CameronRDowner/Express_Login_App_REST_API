@@ -8,6 +8,7 @@ require('dotenv').config();
 router.get('/', authenticateToken, async (req, res) => {
     try {
         const users = await User.find();
+
         res.json(users);
     } 
     catch (error) {
@@ -21,16 +22,16 @@ router.get('/:id', authenticateToken, getUser, (req, res) => {
 
 router.put('/', async (req, res) => {
     bcrypt.hash(req.body.password, 10, async function(err, hash) {
-        if (err){
+        if (err) {
             throw err;
         }
-        else{
+        else {
             const user = new User({
                 username: req.body.username,
                 email: req.body.email,
                 passwordHash: hash
             }) 
-            try{
+            try {
                 const newUser = await user.save();
                 res.status(201).json(newUser);
             }
@@ -42,16 +43,16 @@ router.put('/', async (req, res) => {
 })
 
 router.patch('/:id', authenticateToken, getUser, async (req, res) => {
-    if (req.body.username){
+    if (req.body.username) {
         res.user.username = req.body.username;
     }
-    if(req.body.email){
+    if (req.body.email) {
         res.user.email = req.body.email;
     }
-    if(req.body.passwordHash){
+    if (req.body.passwordHash) {
         res.user.passwordHash = req.body.passwordHash;
     }
-    try{
+    try {
         const updatedUser = await res.user.save();
         res.json(updatedUser)
     }
@@ -61,23 +62,23 @@ router.patch('/:id', authenticateToken, getUser, async (req, res) => {
 })
 
 router.delete('/:id', authenticateToken, getUser, async (req, res) => {
-    try{
+    try {
         User.deleteOne({ userName : { $eq: res.user.userName} })
     }
     catch (error) {
-        res.status(400).json({ message: error.message})
+        res.status(400).json({ message: error.message })
     }
 })
 
-async function getUser(req, res, next){
+async function getUser(req, res, next) {
     let user
-    try{
+    try {
         user = await User.findById(req.params.id);
-        if (user == null){
+        if (user == null) {
             return res.status(404).json({ message: 'Cannot find user' })
         }
     }
-    catch (error){
+    catch (error) {
         return res.status(500).json({ message: error.message })
     }
 
@@ -86,16 +87,18 @@ async function getUser(req, res, next){
 }
 
 
-function authenticateToken(req, res, next){
+function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-    if(token === null){
+
+    if (token === null) {
         return res.sendStatus(401)
     }
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, user) => {
-        if(error){
+        if (error) {
             return res.sendStatus(403);
         }
+        
         req.user = user;
         next()
     })
