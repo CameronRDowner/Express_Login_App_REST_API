@@ -14,4 +14,4 @@ app.use(express.json());
 const userRouter = require('./routes/user');
 app.use('/user', userRouter);
 
-app.listen(process.env.PORT || 3000);
+app.listen(3000);
